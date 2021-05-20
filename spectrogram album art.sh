@@ -16,30 +16,32 @@
 
 # http://jdesbonnet.blogspot.com/2014/02/sox-spectrogram-log-frequency-axis-and.html
 
+# Issue with eyeD3
+# https://github.com/nicfit/eyeD3/issues/200
+
 # get track name using eyeD3, if empty use file name, populate Album metadata with this info
 # where to put existing album metadata? move to other location
 
 # http://sox.sourceforge.net/sox.html
-# https://www.mail-archive.com/sox-devel@lists.sourceforge.net/msg00769.html
 OIFS="$IFS"
 IFS=$'\n'
 
-dirBase='/mnt/pond/media/Plex Media/Other - Audio/spectrogram.png'
-for f in `find '/mnt/pond/media/Plex Media/Other - Audio' -type f -name "[!.]*"`
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+specOut="$SCRIPTPATH/spectrogram.png"
+
+for f in `find "$SCRIPTPATH" -type f \( -iname '*.mp3' -o -iname '*.wav' \) -and -name "[!.]*"`
 do
-  # operations here
-  #echo "file = $f"
-  #echo $f
+  echo $f
   dir=$(dirname "$f")
-  #echo $dir
   base="${f##*/}"
-  #echo $base
   basen="${base%.*}"
   printf "\nfile: $base\n"
-  $(sox "$f" -n spectrogram -o "$dirBase" -L -R 80:8k -x 1050 -y 513 -z 50 -Z -20)
+  $(sox "$f" -n spectrogram -o "$specOut" -L -R 80:8k -x 1050 -y 513 -z 50 -Z -20)
   sleep 1 
   printf "\ncalling eyeD3\n"
-  $(/usr/bin/eyeD3 --add-image="$dirBase":FRONT_COVER "$f")
+  $(/usr/bin/eyeD3 --add-image="$specOut":FRONT_COVER "$f")
   sleep 1
-  #rm "$dirBase"
 done
+
+#rm "$specOut"
