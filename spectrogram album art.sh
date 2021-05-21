@@ -32,15 +32,18 @@ specOut="$SCRIPTPATH/spectrogram.png"
 
 for f in `find "$SCRIPTPATH" -type f \( -iname '*.mp3' -o -iname '*.wav' \) -and -name "[!.]*"`
 do
-  echo $f
+  printf "\n$f\n"
   dir=$(dirname "$f")
   base="${f##*/}"
   basen="${base%.*}"
-  printf "\nfile: $base\n"
+  printf "calling sox\n"
   $(sox "$f" -n spectrogram -o "$specOut" -L -R 80:8k -x 1050 -y 513 -z 50 -Z -20)
-  sleep 1 
-  printf "\ncalling eyeD3\n"
-  $(/usr/bin/eyeD3 --add-image="$specOut":FRONT_COVER "$f")
+  sleep 1
+  printf "calling mid3v2\n"
+  $(/usr/bin/mid3v2 -p "$specOut" "$f")
+  printf "finished $base\n"
+  # printf "\ncalling eyeD3\n"
+  # $(/usr/bin/eyeD3 --add-image="$specOut":FRONT_COVER "$f")
   sleep 1
 done
 
