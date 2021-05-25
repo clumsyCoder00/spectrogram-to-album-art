@@ -13,7 +13,8 @@ Build custom sox package:
 `sudo apt-get install build-essential fakeroot dpkg-dev`  
 `mkdir sox-log-spectrogram`  
 `cd sox-log-spectrogram`  
-[download standard package source files](https://packages.ubuntu.com/focal/sox) (dsc, tar.bz2 and tar.xz files from window on the right)
+[download standard package source files](https://packages.ubuntu.com/focal/sox) into the build folder (dsc, tar.bz2 and tar.xz files from window on the right)  
+`dpkg-buildpackage -rfakeroot -b`
 
 
 # Usage
