@@ -21,6 +21,7 @@ download modified spectrogram.c from [joe-desbonnet-blog](https://github.com/jde
 replace ./sox-14.4.2.../src/spectrogram.c with spectrogram.c file from joe-desbonnet-blog  
 `cd sox_14.4.2+git20190427`  
 
+`sudo apt-get install libopencore-amrnb-dev libopencore-amrwb-dev libao-dev libflac-dev libmp3lame-dev libtwolame-dev libltdl-dev libmad0-dev libid3tag0-dev libvorbis-dev libpng-dev libsndfile1-dev libwavpack-dev`  
 `dpkg-buildpackage -rfakeroot -b`
 
 
