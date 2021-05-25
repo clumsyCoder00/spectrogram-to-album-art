@@ -24,6 +24,10 @@ replace ./sox-14.4.2.../src/spectrogram.c with spectrogram.c file from joe-desbo
 
 `dpkg-buildpackage -rfakeroot -b`
 
+`autoreconf -i`  
+`./configure`  
+`make`  
+`sudo make install`  
 
 # Usage
 Make sure permissions allow for script to be ran as an executable.  
