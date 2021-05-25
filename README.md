@@ -4,7 +4,7 @@ A script that generates a spectrogram of each audio file in a directory, then se
 Script file leverages a [custom build](http://jdesbonnet.blogspot.com/2014/02/sox-spectrogram-log-frequency-axis-and.html) of [sox](http://sox.sourceforge.net/sox.html) to generate spectrogram of file with logarithmic frequency scale. Spectrogram file is set to album artwork of audio file with [mid3v2](https://mutagen.readthedocs.io/en/latest/man/mid3v2.html).
 If custom build is not available, omit the '-L' option from the sox command call. This will revert sox back to a linear frequency chart which decreases resolution at lower (100-1000Hz) freqencies but still makes a useful image.
 
-# Ubuntu Installation
+# Ubuntu 20.04 Installation
 Install necessary packages:  
 `sudo apt-get install sox`  
 `sudo apt-get install python3-mutagen`  
@@ -13,7 +13,7 @@ Build custom sox package:
 `sudo apt-get install build-essential fakeroot dpkg-dev`  
 `mkdir sox-log-spectrogram`  
 `cd sox-log-spectrogram`  
-
+[download standard package source files](https://packages.ubuntu.com/focal/sox) (dsc, tar.bz2 and tar.xz files from window on the right)
 
 
 # Usage
