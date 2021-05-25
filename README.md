@@ -14,6 +14,10 @@ Build custom sox package:
 `mkdir sox-log-spectrogram`  
 `cd sox-log-spectrogram`  
 [download standard package source files](https://packages.ubuntu.com/focal/sox) into the build folder (dsc, tar.bz2 and tar.xz files from window on the right)  
+`sudo apt-get install dpkg-dev`  
+`dpkg-source -x sox_14.4.2+git20190427-2.dsc`
+download modified spectrogram.c from [joe-desbonnet-blog](https://github.com/jdesbonnet/joe-desbonnet-blog/tree/master/projects/sox-log-spectrogram)  
+replace ./sox-14.4.2.../src/spectrogram.c with 
 `dpkg-buildpackage -rfakeroot -b`
 
 
