@@ -9,10 +9,10 @@ Install necessary packages:
 `sudo apt-get install sox`  
 `sudo apt-get install python3-mutagen`  
 
-Build custom sox package:
-'sudo apt-get install build-essential fakeroot dpkg-dev'  
-'mkdir sox-log-spectrogram'  
-'cd sox-log-spectrogram'  
+Build custom sox package:  
+`sudo apt-get install build-essential fakeroot dpkg-dev`  
+`mkdir sox-log-spectrogram`  
+`cd sox-log-spectrogram`  
 
 
 
