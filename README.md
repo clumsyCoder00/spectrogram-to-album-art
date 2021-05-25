@@ -5,9 +5,9 @@ Script file leverages a [custom build](http://jdesbonnet.blogspot.com/2014/02/so
 If custom build is not available, omit the '-L' option from the sox command call. This will revert sox back to a linear frequency chart which decreases resolution at lower (100-1000Hz) freqencies but still makes a useful image.
 
 # Ubuntu Installation
-Install necessary packages:
-sudo apt-get install sox
-sudo apt-get install python3-mutagen
+Install necessary packages:  
+sudo apt-get install sox  
+sudo apt-get install python3-mutagen  
 
 # Usage
 Make sure permissions allow for script to be ran as an executable.  
