@@ -1,9 +1,10 @@
 #!/bin/bash
 # todo
+# print count of files completed
+# 
 # https://linux.die.net/man/1/mid3v2
 # mid3v2 -l ( list frames in file)
-# strip cover, album frames
-# mid3v2 --delete-frames=TALB,APIC
+# 
 # http://jdesbonnet.blogspot.com/2014/02/sox-spectrogram-log-frequency-axis-and.html
 
 # http://webcache.googleusercontent.com/search?q=cache:DIoqGD6wbEcJ:sox.sourceforge.net/sox.html+&cd=1&hl=en&ct=clnk&gl=us
@@ -49,9 +50,9 @@ setSpectrogram() {
 	  
 	  if [ $channels == '1' ]
 	  then
-		$(sox "$1" -n spectrogram -o "$specOut" -t 'MONO V2.0' -L -R 80:8k -x 212 -y 257 -z 30 -Z -15)
+		$(sox "$1" -n spectrogram -o "$specOut" -t 'MONO V2.5' -L -R 80:8k -x 212 -y 257 -z 30 -Z -15)
 	  else
-		$(sox "$1" -n spectrogram -o "$specOut" -t 'STEREO V2.0' -L -R 80:8k -x 525 -y 257 -z 30 -Z -15)
+		$(sox "$1" -n spectrogram -o "$specOut" -t 'STEREO V2.5' -L -R 80:8k -x 525 -y 257 -z 30 -Z -15)
 	  fi
 	  sleep 1
 	  printf "calling mid3v2\n"
@@ -63,10 +64,28 @@ setSpectrogram() {
 
 if [ -n "$1" ]
 then
-	setSpectrogram "$1"
+	if [ -d $1 ]
+	then
+		count=0
+		for f in `find "$1" -type f \( -iname '*.mp3' -o -iname '*.wav' \) -and -name "[!.]*"`
+		do
+			count=$(($count+1))
+			printf "\ncount: $count"
+			setSpectrogram "$f"
+		done
+	elif [ -f $1 ]
+	then
+		setSpectrogram "$1"
+	else
+		echo "$1 is not valid"
+		exit 1
+	fi
 else
+	count=0
 	for f in `find "$SCRIPTPATH" -type f \( -iname '*.mp3' -o -iname '*.wav' \) -and -name "[!.]*"`
 	do
-	setSpectrogram "$f"
+		count=$(($count+1))
+		printf "\ncount: $count"
+		setSpectrogram "$f"
 	done
 fi
