@@ -6,8 +6,8 @@ If custom build is not available, omit the '-L' option from the sox command call
 
 # Ubuntu Installation
 Install necessary packages:  
-sudo apt-get install sox  
-sudo apt-get install python3-mutagen  
+`sudo apt-get install sox`  
+`sudo apt-get install python3-mutagen`  
 
 # Usage
 Make sure permissions allow for script to be ran as an executable.  
