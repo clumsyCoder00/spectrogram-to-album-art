@@ -9,6 +9,13 @@ Install necessary packages:
 `sudo apt-get install sox`  
 `sudo apt-get install python3-mutagen`  
 
+Build custom sox package:
+'sudo apt-get install build-essential fakeroot dpkg-dev'  
+'mkdir sox-log-spectrogram'  
+'cd sox-log-spectrogram'  
+
+
+
 # Usage
 Make sure permissions allow for script to be ran as an executable.  
 Script can be called in three different ways:
