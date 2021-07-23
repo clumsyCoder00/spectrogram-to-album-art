@@ -5,7 +5,10 @@ Script file leverages a [custom build](http://jdesbonnet.blogspot.com/2014/02/so
 If custom build is not available, omit the '-L' option from the sox command call. This will revert sox back to a linear frequency chart which decreases resolution at lower (100-1000Hz) freqencies but still makes a useful image.
 [this guide](https://audiodigitale.eu/?p=25) was helpful to determine dependencies
 
-# Ubuntu 20.04 Installation
+# mid3v2 Installation
+sudo apt-get install python3-mutagen
+
+# Ubuntu 20.04 Sox log Frequency Installation
 Install necessary packages:  
 `sudo apt-get install sox`  
 `sudo apt-get install libsox-fmt-mp3`  
@@ -19,7 +22,7 @@ Build custom sox package:
 `dpkg-source -x sox_14.4.2+git20190427-2.dsc`  
 download modified spectrogram.c from [joe-desbonnet-blog](https://github.com/jdesbonnet/joe-desbonnet-blog/tree/master/projects/sox-log-spectrogram)  
 replace ./sox-14.4.2.../src/spectrogram.c with spectrogram.c file from joe-desbonnet-blog  
-`cd sox_14.4.2+git20190427`  
+`cd sox-14.4.2+git20190427`  
 
  
 
