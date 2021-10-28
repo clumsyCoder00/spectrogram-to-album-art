@@ -1,7 +1,18 @@
 #!/bin/bash
-# todo
-# print count of files completed
-# 
+# ---- **** ----
+# DEPENDENCIES
+# ffmpeg
+# sox
+# mid3v2
+#
+# ffmpeg -i '/mnt/pond/media/Plex Media/Other - Audio/PEP/PEP10 - estim.aac' '/mnt/pond/media/Plex Media/Other - Audio/PEP/PEP10 - estim.mp3'
+# get more info about the file...
+# https://stackoverflow.com/questions/43415353/explanation-of-audio-stat-using-sox
+# TODO
+# use custom frame to store processed status
+# --TXXX "ALBUMARTISTSORT:Examples, The"
+# --TPRC "SPEC_ALBUM_ART:true"
+
 # https://linux.die.net/man/1/mid3v2
 # mid3v2 -l ( list frames in file)
 # 
@@ -11,6 +22,8 @@
   # y in powers of 2+1
   # max plex resolution is 778 x 720
   # x = 2*y with stereo
+  
+  # sox --help-effect spectrogram
   
   # sox options
   # x		100-200000(800)		width of x axis in pixels
@@ -33,41 +46,97 @@
   # n stat
   # n stats
 
+# sox variables
+# -R 80:8k -z 30 -Z -15
+
+# plex artwork ratio 780:720 1.08:1 
+# with legend and axis
+# -x 212 -y 257
+# -x 525 -y 257 (equates to 515 wide
+
+# 525/270 * 780 = 570/2 = 285
+
 OIFS="$IFS"
 IFS=$'\n'
 
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 specOut="$SCRIPTPATH/spectrogram.png"
+inteOut="$SCRIPTPATH/intensity.png"
+combOut="$SCRIPTPATH/combined.png"
+soxPath='/home/nuthanael/sox-log-spectrogram/sox-14.4.2+git20190427/src/sox'
+ffmpegPath='ffmpeg'
+count=0
+procCount=0
 
 setSpectrogram() {
-	  printf "\n$1\n"
-	  dir=$(dirname "$1")
-	  base="${1##*/}"
-	  basen="${base%.*}"
-	  printf "calling sox\n"
-	  channels=$(/usr/bin/soxi -c "$1")
-	  
-	  if [ $channels == '1' ]
-	  then
-		$(sox "$1" -n spectrogram -o "$specOut" -t 'MONO V2.5' -L -R 80:8k -x 212 -y 257 -z 30 -Z -15)
-	  else
-		$(sox "$1" -n spectrogram -o "$specOut" -t 'STEREO V2.5' -L -R 80:8k -x 525 -y 257 -z 30 -Z -15)
-	  fi
-	  sleep 1
-	  printf "calling mid3v2\n"
-	  $(/usr/bin/mid3v2 --delete-frames=TALB,APIC "$1")
-	  $(/usr/bin/mid3v2 -p "$specOut" "$1")
-	  printf "finished $base\n"
-	  sleep 1
+	track=""
+	album=""
+	processed=""
+	printf "\n$1\n"
+	dir=$(dirname "$1")
+	dirn=${dir##*/}
+	base="${1##*/}"
+	basen="${base%.*}"
+	processed=$(/usr/bin/mid3v2 -l "$1"  | grep -a "TXXX=SPECPROC=" | cut -c15-)
+	#if [ "$processed" != "1" ]
+	if [ true ]
+	then
+		procCount=$(($procCount+1))
+		printf "Processed count: $procCount\n"
+		channels=$(/usr/bin/soxi -c "$1")
+		printf "calling sox\n"
+		
+		if [ $channels == '1' ]
+		then
+			$("$soxPath" "$1" -V2 -n spectrogram -o "$specOut" -r -x 600 -y 600 -L -R 100:4k -z 25 -Z -5 -t 'MONO V3.0')
+		else
+			$("$soxPath" "$1" -V2 -n spectrogram -o "$specOut" -r -x 600 -y 300 -L -R 100:4k -z 25 -Z -5 -t 'STEREO V3.0')
+		fi
+		#sleep 1
+		printf "calling ffmpeg\n"
+		# ffmpeg intensity graph
+		$("$ffmpegPath" -y -hide_banner -loglevel error -i "$1" -filter_complex "showwavespic=s=600x600:split_channels=1:colors=#ffffff" -frames:v 1 $inteOut)
+		# ffmpeg overlay
+		$("$ffmpegPath" -y -hide_banner -loglevel error -i "$specOut" -i "$inteOut" -filter_complex "[1:v]format=argb,geq=r='r(X,Y)':a='0.5*alpha(X,Y)'[zork]; [0:v][zork]overlay" "$combOut")
+		
+		printf "calling mid3v2\n"
+		# deleting existing album art/setting new
+		$(/usr/bin/mid3v2 --delete-frames="APIC" "$1")
+		$(/usr/bin/mid3v2 -p "$combOut" "$1")
+
+		# set album info
+		# getting existing album info
+		# track=$(/usr/bin/mid3v2 "$1" | grep ^TIT2= | cut -c6-)
+		# if [ -z "$track" ]
+		# then
+		# 	printf "Track metadata is empty, using file name\n"
+		# 	BASENAME="${1##*/}"
+		# 	track="${BASENAME%.*}"
+		# fi
+		# album=$(/usr/bin/mid3v2 "$1" | grep ^TALB= | cut -c6-)
+		# if [ "$album" != "$track" ]
+		# then
+		# 	printf "Setting track to album\n"
+		# 	$(/usr/bin/mid3v2 --album=$track "$1")
+		# fi
+		album="$dirn - $basen"
+		$(/usr/bin/mid3v2 --album=$album  "$1")
+		
+		# setting processed metadata
+		$(/usr/bin/mid3v2 --TXXX "SPECPROC:1" $1)
+		printf "finished\n"
+	else
+		printf "skipping\n"
+	fi
+	#sleep 1
 }
 
 if [ -n "$1" ]
 then
 	if [ -d $1 ]
 	then
-		count=0
-		for f in `find "$1" -type f \( -iname '*.mp3' -o -iname '*.wav' \) -and -name "[!.]*"`
+		for f in `find "$1" -type f \( -iname '*.mp3' -o -iname '*.wav' -o -iname '*.flac' \) -and -name "[!.]*"`
 		do
 			count=$(($count+1))
 			printf "\ncount: $count"
@@ -81,8 +150,7 @@ then
 		exit 1
 	fi
 else
-	count=0
-	for f in `find "$SCRIPTPATH" -type f \( -iname '*.mp3' -o -iname '*.wav' \) -and -name "[!.]*"`
+	for f in `find "$SCRIPTPATH" -type f \( -iname '*.mp3' -o -iname '*.wav' -o -iname '*.flac' \) -and -name "[!.]*"`
 	do
 		count=$(($count+1))
 		printf "\ncount: $count"
