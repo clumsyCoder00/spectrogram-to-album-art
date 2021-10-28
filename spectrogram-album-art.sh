@@ -5,7 +5,6 @@
 # sox
 # mid3v2
 #
-# ffmpeg -i '/mnt/pond/media/Plex Media/Other - Audio/PEP/PEP10 - estim.aac' '/mnt/pond/media/Plex Media/Other - Audio/PEP/PEP10 - estim.mp3'
 # get more info about the file...
 # https://stackoverflow.com/questions/43415353/explanation-of-audio-stat-using-sox
 # TODO
@@ -64,7 +63,7 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 specOut="$SCRIPTPATH/spectrogram.png"
 inteOut="$SCRIPTPATH/intensity.png"
 combOut="$SCRIPTPATH/combined.png"
-soxPath='/home/nuthanael/sox-log-spectrogram/sox-14.4.2+git20190427/src/sox'
+soxPath='/path/to/sox'
 ffmpegPath='ffmpeg'
 count=0
 procCount=0
@@ -105,21 +104,6 @@ setSpectrogram() {
 		$(/usr/bin/mid3v2 --delete-frames="APIC" "$1")
 		$(/usr/bin/mid3v2 -p "$combOut" "$1")
 
-		# set album info
-		# getting existing album info
-		# track=$(/usr/bin/mid3v2 "$1" | grep ^TIT2= | cut -c6-)
-		# if [ -z "$track" ]
-		# then
-		# 	printf "Track metadata is empty, using file name\n"
-		# 	BASENAME="${1##*/}"
-		# 	track="${BASENAME%.*}"
-		# fi
-		# album=$(/usr/bin/mid3v2 "$1" | grep ^TALB= | cut -c6-)
-		# if [ "$album" != "$track" ]
-		# then
-		# 	printf "Setting track to album\n"
-		# 	$(/usr/bin/mid3v2 --album=$track "$1")
-		# fi
 		album="$dirn - $basen"
 		$(/usr/bin/mid3v2 --album=$album  "$1")
 		
